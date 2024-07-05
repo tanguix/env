@@ -40,8 +40,8 @@ choose sacle -> more space -> night shift
 2) position it on anywhere other than bottom
 3) go to the bottom for hot corner, setup screen saver
 4) mission control (bottom) 
+    + displays have separate spaces --> enable (for monitor to act like individual display)
     + automatically rearrange spaces based on most use --> disable (no idea)
-    + displays have separate spaces --> disable (no idea)
 ```
 
 ### &#x2464; Control Center
@@ -497,21 +497,19 @@ will cause version conflict
 >> brew install gcc
 ```
 
-&#x23f5; *mongoDB Server*
-*[mongodb compass]("https://www.mongodb.com/try/download/compass")*
+&#x23f5; *[mongoDB Server](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/) | [compass](https://www.mongodb.com/try/download/atlascli) (ARM64 Platform)*
 ```shell
 # install mongoDB server
 >> brew tap mongodb/brew
 
-# install community edition 
+# install community edition (refer to the official doc for versions)
 >> brew install mongodb-community
 
 # start for use
 >> brew services start mongodb-community@7.0
 >> brew services stop mongodb-community@7.0
->> mongosh
+>> mongosh  # for checking
 ```
-
 
 &#x23f5; *Node.js: [macOS installer LTS version](https://bit.ly/nodenpm)*
 ```shell

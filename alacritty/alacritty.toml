@@ -1,7 +1,7 @@
 
 
 # basic default directory when opening alacritty (have to be on the top)
-#working_directory = "/Users/tanguix/swallow/element/projects/sh/"
+working_directory = "/Users/tanguix/swallow/element/projects/sh/"
 
 
 # ----------------------------- WINDOW ------------------------------
@@ -62,8 +62,8 @@ yellow = "#F9E2Af"
 
 [colors.primary]
 # background = "#1e1d2d"
-# background = "#011628"
-background = "#08141c"
+background = "#011423"
+# background = "#08141c"
 foreground = "#CDD6F4"
 
 [colors.search.focused_match]
