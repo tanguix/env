@@ -1,0 +1,221 @@
+
+
+# basic default directory when opening alacritty (have to be on the top)
+#working_directory = "/Users/tanguix/swallow/element/projects/sh/"
+
+
+# ----------------------------- WINDOW ------------------------------
+# term color
+[env]
+TERM = "xterm-256color"
+
+[window]
+decorations = "buttonless"	# no clickable button on top
+dynamic_padding = false
+title = "TANGUI614"
+padding.x = 10
+padding.y = 10
+opacity = 0.92
+blur = true 			# finally add blur function!
+option_as_alt = "Both"		# set option key = alt key in macOS
+
+[window.dimensions]		# very nice setup for mac pro 16' screen
+columns = 223
+lines = 65
+
+[window.position]
+x = 30
+y = 180
+
+
+
+
+# global colors, I like to setup color myself
+[colors.bright]
+black = "#3E3859"
+blue = "#65B2FF"
+cyan = "#63F2F1"
+green = "#A1EFD3"
+magenta = "#D4BFFF"
+red = "#ff757f"
+white = "#ffffff"
+yellow = "#FFE6B3"
+
+# normal
+[colors.normal]
+black = "#121212"
+blue = "#7aa2f7"
+cyan = "#91DDFF"
+green = "#4fd6be"
+magenta = "#A37ACC"
+red = "#ff757f"
+white = "#CDD6F4"
+yellow = "#F9E2Af"
+
+[colors.primary]
+# background = "#1e1d2d"
+# background = "#011628"
+background = "#08141c"
+foreground = "#CDD6F4"
+
+[colors.search.focused_match]
+background = "#D8DEE9"
+foreground = "#100E23"
+
+[colors.search.matches]
+background = "#ffffff"
+foreground = "#000000"
+
+[colors.selection]
+background = "#ffffff"
+text = "#000000"
+
+
+# cursor color
+[colors.cursor]
+cursor = "#7aa2f7"
+text = "#000000"
+
+
+[cursor.style]
+blinking = "On"
+shape = "Underline"
+
+
+# color effect of cursor
+[cursor]
+blink_interval = 500
+blink_timeout = 3
+thickness = 0.2
+unfocused_hollow = true
+vi_mode_style = "Underline"
+
+
+
+# font size
+[font]
+size = 16
+
+
+[font.italic]
+family = "Monofur Nerd Font"
+# family = "FiraCode Nerd Font"
+style = "Italic"
+
+[font.normal]
+# family = "FiraCode Nerd Font"
+family = "Monofur Nerd Font"
+style = "Regular"
+
+[font.offset]
+x = 1
+y = 6
+
+# tmux pane spliting horizontal direction
+[[keyboard.bindings]]
+chars = "\u0001M"
+key = "M"
+mods = "Command"
+
+# tmux pane spliting on vertical direction
+[[keyboard.bindings]]
+chars = "\u0001B"
+key = "B"
+mods = "Command"
+
+# save changes in neovim
+[[keyboard.bindings]]
+chars = """
+\u001B:w
+"""
+key = "S"
+mods = "Command"
+
+# rename tmux session
+[[keyboard.bindings]]
+chars = "\u0001$"
+key = "R"
+mods = "Command"
+
+# no idea what this is  
+[[keyboard.bindings]]
+chars = "dse"
+key = "D"
+mods = "Option"
+
+# no idea either
+[[keyboard.bindings]]
+chars = "cse"
+key = "C"
+mods = "Option"
+
+# new tab in tmux
+[[keyboard.bindings]]
+chars = "\u0001c"
+key = "T"
+mods = "Command"
+
+# kill windows
+[[keyboard.bindings]]
+chars = "\u0001x"
+key = "W"
+mods = "Command"
+
+# detach tmux session
+[[keyboard.bindings]]
+chars = "\u0001d"
+key = "D"
+mods = "Command"
+
+# tmux session selection
+[[keyboard.bindings]]
+chars = "\u0001p"
+key = "P"
+mods = "Command"
+
+# comments gc
+[[keyboard.bindings]]
+chars = "gc"
+key = "Slash"
+mods = "Control"
+
+# comments gcc
+[[keyboard.bindings]]
+chars = "gcc"
+key = "Slash"
+mods = "Command"
+
+# select windows
+[[keyboard.bindings]]
+chars = "\u00011"
+key = "Key1"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u00012"
+key = "Key2"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u00013"
+key = "Key3"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u00014"
+key = "Key4"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0001E"
+key = "Key5"
+mods = "Command"
+
+[scrolling]
+history = 2000
+
+[selection]
+save_to_clipboard = true
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+
+

@@ -1,0 +1,263 @@
+
+
+# sample reference 
+# https://github.com/alacritty/alacritty/blob/master/alacritty.yml
+
+
+# env TERM variable 
+env:
+  TERM: xterm-256color
+
+working_directory: "/Users/mikiyax/swallow/element/"
+
+# ======================================================= Color ====================================================
+colors:
+  # default color 
+  primary:
+    # background: '#121212'
+    background: '#1e1d2d'
+    # background: '#1e1e2e'
+    foreground: '#CDD6F4' # text color
+
+  # cursor color
+  cursor: 
+    text: '#000000'
+    # cursor: '#4fd6be' # the color of text that the cursor is currently on
+    # cursor: '#62D196'
+    # cursor: '#89B4FA'
+    cursor: '#7aa2f7'
+
+  # search color 
+  search:
+    matches: 
+      foreground: '#000000'
+      background: '#ffffff'
+
+    focused_match:
+      foreground: '#100E23'
+      background: '#D8DEE9'
+
+  # selection color 
+  selection:
+    text: '#000000'
+    background: '#ffffff'
+
+
+  # normal color 
+  normal:
+    black: '#121212'
+    # red: '#ab1c0f' 
+    # red: '#d12c1d'
+    # red: '#f38ba8'
+    red: '#ff757f'
+    # green: '#62D196'
+    # green: '#abebb3'
+    green: '#4fd6be'
+    # green: '#A1EFD3'
+    # yellow: '#F2B482'
+    yellow: '#F9E2Af'
+    blue: '#7aa2f7'
+    # blue: '#89B4FA'
+    magenta: '#A37ACC'
+    # magenta: '#CBA6F7'
+    cyan: '#91DDFF'
+    white: '#CDD6F4'
+
+  # Bright colors
+  bright:
+    black: '#3E3859'
+    red: '#ff757f'
+    green: '#A1EFD3'
+    yellow: '#FFE6B3'
+    blue: '#65B2FF'
+    magenta: '#D4BFFF'
+    cyan: '#63F2F1'
+    white: '#ffffff'
+
+
+
+# ======================================================== cursor style =============================================================
+
+# when select the text with cursor
+selection:
+  # This is string contains all characters that are used as separators for "semantic words"
+  semantic_escape_chars: ",│`|:\"' ()[]{}<>\t"
+
+  # when set to 'true', selected text will be copied to the primary clipboard 
+  save_to_clipboard: true
+
+# cursor
+cursor:
+  style:
+    shape: Underline
+    # shape: block
+
+    # cursor blinking state
+    blinking: On
+
+  # vi-mode-style 
+  vi_mode_style: Underline
+
+  # Cursor blinking interval in milliseconds
+  blink_interval: 500
+
+  # spcifying '0' will disable timeout for blinking 
+  # right it will stop after blinking 3 sec
+  blink_timeout: 3
+
+  # if setting to true
+  # the cursor will be rendered as a hollow box when the window is not focused
+  unfocused_hollow: true
+
+  # thickness of the cursor relative to the cell width as floating point value
+  thickness: 0.2
+
+
+
+# ======================================================== Font ================================================================
+font:
+  normal:
+    # family: JetBrainsMono Nerd Font
+    # family: Mononoki Nerd Font
+    family: Monofur Nerd Font
+    style: Regular
+    # style: Thin
+    
+  italic:
+    family: Monofur Nerd Font
+    # family: JetBrainsMono Nerd Font
+    style: Italic
+
+  # the extra space around each character
+  # offset.y could be thought of as modifying the line spacing
+  # offset.x for letter spacing
+  offset:
+    x: 1
+    y: 6
+
+  size: 16
+
+
+
+# ===================================================== window dimension ==================================================
+window:
+  
+  # dimensions
+  dimensions:
+    columns: 200
+    lines: 70
+
+  # position on the screen, later can be replaced by window manager
+  position:
+    x: 50
+    y: 200
+
+  # padding on display content
+  padding:
+    x: 6
+    y: 3
+
+  # spread additional padding evenly around the terminal content: no 
+  dynamic_padding: false
+
+  # background opacity 
+  opacity: 0.991
+
+  # visibility of top bar/title bar
+  decorations: buttonless
+  # decorations: transparent
+
+  # window title 
+  title: Mikiya
+
+
+# scrolling 
+scrolling:
+  history: 2000
+
+
+
+
+# ===================================================== Keying Binding =======================================================
+# mods: 
+#   - Command 
+#   - Control 
+#   - Option 
+#   - Super 
+#   - Shift 
+#   - Alt
+
+# how does the computer detect the keystroke and react to it?
+#   + by hex code, each key is binded with a unique hexcode
+#   + therefore, by mapping certain key to express the same hexcode value could achieve the effect of key mapping
+#   + alacritty provide this feature through chars values
+#
+# how to get the hex code? at least on Mac
+#   + get out of tmux 
+#  >> xxd -psd
+#   + after pressing some key in this mode, and enter, corresponding hexcode will be returned
+#   + right now the prefix key is ctrl+B in tmux 
+#   + find hex code of shortcut keymap in tmux, and map with new shortcut
+#   + "0a" is the hex code for <Enter>
+
+key_bindings:
+
+  # ----------------------------------------------------------------------------------
+  # general keymapping (this mapping could also be done in neovim keymap.lua I assume, because autosave is done at there)
+  # since I switch to vscode, so the keymap configuration file here is no longer valid for my behavior
+  # split the current pane left and right: prefix + N
+  # - { key: N, mods: Command, chars: "\x01\x4e" }
+  - { key: M, mods: Command, chars: "\x01\x4d" }
+  # split the current pane top and down: prefix + B
+  - { key: B, mods: Command, chars: "\x01\x42" }
+  # Type <escape>:w<enter> == autosave in neovim 
+  - { key: S, mods: Command, chars: "\x1b\x3a\x77\x0a" }
+  # rename the current session: prefix + $ 
+  - { key: R, mods: Command, chars: "\x01\x24" }  
+  # source tmux.conf file
+  # - { prefix + r }
+  # Copy & Paste
+  # : because inside neovim option.lua has a setup that share the clipboard with MacOS
+  # : yy can be used to cmd + v
+  # so not need to map copy and paste right now 
+  # ----------------------------------------------------------------------------------
+  # VimTex shortcut 
+  # delete surrounding environments
+  - { key: D, mods: Option, chars: "\x64\x73\x65" } 
+  # change surrounding environments
+  - { key: C, mods: Option, chars: "\x63\x73\x65" }
+
+
+  # ----------------------------------------------------------------------------------
+  # Window 
+  # new tmux window: 
+  - { key: T, mods: Command, chars: "\x01\x63" }
+  # kill current pane: prefix + x
+  - { key: W, mods: Command, chars: "\x01\x78" }
+  # detach current session: prefix + d 
+  - { key: D, mods: Command, chars: "\x01\x64" }
+  # select a tmux session to attach while inside tmux(p as preview): prefix + w 
+  - { key: P, mods: Command, chars: "\x01\x70" }
+
+
+  # ----------------------------------------------------------------------------------
+  # comment command: gcc (from neovim plugin)
+  - { key: Slash, mods: Command, chars: "\x67\x63" }
+
+
+  # ----------------------------------------------------------------------------------
+  # select window 1-9
+  - { key: Key1, mods: Command, chars: "\x01\x31" }
+  - { key: Key2, mods: Command, chars: "\x01\x32" }
+  - { key: Key3, mods: Command, chars: "\x01\x33" }
+  - { key: Key4, mods: Command, chars: "\x01\x34" }
+  - { key: Key5, mods: Command, chars: "\x01\x45" }
+  
+
+
+
+
+
+
+
+

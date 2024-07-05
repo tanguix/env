@@ -1,0 +1,61 @@
+
+#!/bin/zsh
+
+# this command make the script stop on the first error it encounter
+# by default it won't stop even if something went wrong
+set -eo pipefail
+
+# color red 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+# no color 
+NOCOLOR='\033[0m'
+
+# Get the URL of the origin remote
+repo_url=$(git config --get remote.origin.url)
+
+# Extract the username and repository name from the URL
+username=$(echo $repo_url | cut -d'/' -f4)
+repo_name=$(echo $repo_url | cut -d'/' -f5 | cut -d'.' -f1)
+
+# Get the current branch 
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+# if your branch is not main, will be notified
+if [ "$current_branch" != main ] && [ "$current_branch" != master ]; then 
+    # echo WARNINGS: YOU ARE ON BRANCH: "$current_branch", not main or master. 
+    echo "\n${RED}WARNINGS: YOU ARE ON BRANCH '$current_branch' NOT MAIN OR MASTER${NOCOLOR}"
+fi
+
+# Print the username, repository name and the branch you are on in system green color
+echo "You are in the repository: ${GREEN}'$username/$repo_name'${NOCOLOR} on branch ${GREEN}'$current_branch'${NOCOLOR}"
+
+# Run git status 
+git status;
+
+
+
+# Print instructions and wait for reply 
+# (read -p "push changes?(yY/nN): " -n 1 -r)  # bash syntax 
+read -k 1 "?push changes?(yY/nN): " REPLY            # zsh syntax
+
+# If the reply command == yes[Y|y]
+if [[ $REPLY =~ ^[Yy]$ ]]; then 
+    # Add all files that had changed 
+    git add .                   
+
+    # Ask for commit message 
+    printf "\n --- commit message --- \n"
+    read -r message                     
+
+    git commit -m "$message"
+    git push -u $repo_url $current_branch
+
+# If received N/n on the second if question
+elif [[ $REPLY =~ ^[Nn]$ ]]; then 
+    printf "\nNo changes pushed\n"
+    sleep 0.5                         
+    exit 
+fi
+
+
