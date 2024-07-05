@@ -497,7 +497,7 @@ will cause version conflict
 >> brew install gcc
 ```
 
-&#x23f5; *[mongoDB Server](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/) | [compass](https://www.mongodb.com/try/download/atlascli) (ARM64 Platform)*
+&#x23f5; *mongoDB: [server install](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/)* | *[compass](https://www.mongodb.com/try/download/atlascli) (ARM64 Platform)*
 ```shell
 # install mongoDB server
 >> brew tap mongodb/brew
