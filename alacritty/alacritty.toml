@@ -61,8 +61,8 @@ yellow = "#F9E2Af"
 
 
 [colors.primary]
-# background = "#1e1d2d"
-background = "#011423"
+background = "#040c24"
+# background = "#011423"
 # background = "#08141c"
 foreground = "#CDD6F4"
 
