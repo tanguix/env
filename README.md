@@ -28,7 +28,7 @@ choose sacle -> more space -> night shift
 ```
 1) finder 
     + open finder 
-    + go to view -> Show Path bar 
+    + go to view -> Show Path bar -> Show Status bar
     + ctrl + click the icon on the path bar for copying the path
 2) safari 
 3) system preference
@@ -36,7 +36,7 @@ choose sacle -> more space -> night shift
 ### &#x2463; Desktop & Dock
 **+ hide dock:** 
 ```
-1) set it automatically show
+1) set it automatically show -> Dock size & Magnification
 2) position it on anywhere other than bottom
 3) go to the bottom for hot corner, setup screen saver
 4) mission control (bottom) 
@@ -275,7 +275,7 @@ brew uninstall/remove xxx
 </details>
 
 ### ➌  Terminal Emulator
-&#x23f5; *[alacritty.yml](./alacritty/alacritty.yml)*
+&#x23f5; *[alacritty.toml](./alacritty/alacritty.toml)*
 ```shell
 brew install --cask alacritty
 ```
@@ -374,8 +374,8 @@ still missing some icon even after patched, look into it later
 
 2) Connect Local Repo with Remote (github)
 ------------------------------------------------------------------------------------------------
->> git config --global user.name "mikiya"                                   // setup username
->> git config --global user.email "spacelion121319@gmail.com"               // setup user.email
+>> git config --global user.name "github_account_name"                      // setup username
+>> git config --global user.email "email_asscoiated_with_github@xxx.com"    // setup user.email
 >> git config -l                                                            // check both
 >> cd "xxx"
 >> git branch -M main                                                       // name branch "main"
@@ -642,6 +642,10 @@ brew install tree
 # checking if tmux is missing some color
 # path variable needed to be setup first, and you have to be inside tmux session
 >> tmux info | grep -e RGB -e Tc
+
+# for tmux package manager to work in the tmux.conf 
+# first need to download it 
+>> git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
 
 #### &#x260d; zsh
@@ -658,12 +662,10 @@ export XDG_DATA_HOME=$HOME/.local/share
 # zsh config dir
 export ZDOTDIR=$HOME/.config/zsh
 
-# if the login info is displayed
-# add the clear at the end of the .zprofile 
-# else do remove the clear command
-clear
+# homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
-&#x23f5; *Setup zsh Directory*
+&#x23f5; *Setup zsh Directory(or just download zsh/)*
 ```
 # you can download all from env
 >> cd ~/.config 
@@ -674,7 +676,8 @@ clear
 ```
 # powerlevel10k (before you know how to write your own prompt use this)
 
->> brew install romkatv/powerlevel10k/powerlevel10k
+# path variables all setup within zsh/, just need to check path correstness
+>> brew install powerlevel10k
 # keep track of the installation path of powerlevel10k
 >> echo "source '$(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme'" >> ~/.config/zsh/.zshrc
 # "$(brew --prefix)" is basically where your homebrew lies "/opt/homebrew"
@@ -684,11 +687,7 @@ clear
 ```
 
 #### &#x260d; Neovim
-*Two Options* <br>
-1) [`NvChad`](https://github.com/NvChad/NvChad) | [`tutorials`](https://www.youtube.com/watch?v=Mtgo-nP_r8Y)
-<br>
-
-2) [`my config`](./nvim/) | [`kickstart.nvim`](https://github.com/nvim-lua/kickstart.nvim)
+[`my config`](./nvim/) | [`kickstart.nvim`](https://github.com/nvim-lua/kickstart.nvim)
 
 ```shell
 >> brew install neovim
@@ -710,6 +709,11 @@ clear
 │   │       ├── ...(list of plugins config)
 │   │       └── dashboard.lua
 │   └── lazy.lua
+
+# download all nvim/ setting, let Lazy & Mason do their job
+# some lsp server require npm to be installed as dependency, so make sure install that first
+>> :Lazy 
+>> :Mason
 ```
 
 
@@ -726,7 +730,12 @@ clear
 | `:ColorizerToggle` | *cancel color preview from current buffer* |
 | `:TSInstall python` | *- install new highlighters(name): `:TSInstall <name>`* <br> *- check installed syntax: `TSInstallInfo`* |
 | `:Mason`  |  *Mason LSP Console UI*  |
+| `:MasonUninstallAll`  |  *uninstall all lsp-server through mason*  |
 | `:MasonInstall <name>` | *LSP plugin manager, if new plugins not listed, exit and reopen with vim* |
+| `:I`  |  *Install the package under the cursor*  |
+| `:u`  |  *Update the package under the cursor*  |
+| `:U`  |  *Install all package under the cursor*  |
+| `:X`  |  *Uninstall the package under the cursor*  |
 
 
 

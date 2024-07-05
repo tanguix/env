@@ -36,7 +36,7 @@ return {
         "cssls",
         -- "tailwindcss",  -- do I need this?
         "svelte",
-        "lua_ls",
+        -- "lua_ls",
         "graphql",
         "emmet_ls",
         "prismals",

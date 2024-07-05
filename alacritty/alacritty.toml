@@ -20,14 +20,20 @@ blur = true 			# finally add blur function!
 option_as_alt = "Both"		# set option key = alt key in macOS
 
 [window.dimensions]		# very nice setup for mac pro 16' screen
-columns = 223
+columns = 235
 lines = 65
 
+# starting point is like 
+#      |
+#   ---.--- x
+#      |
+#      y
+# current one is good for 16' MacBook
 [window.position]
-x = 30
-y = 180
+x = 40
+y = 120
 
-
+# !you may set some better position for larger screen
 
 
 # global colors, I like to setup color myself
@@ -41,6 +47,7 @@ red = "#ff757f"
 white = "#ffffff"
 yellow = "#FFE6B3"
 
+
 # normal
 [colors.normal]
 black = "#121212"
@@ -51,6 +58,7 @@ magenta = "#A37ACC"
 red = "#ff757f"
 white = "#CDD6F4"
 yellow = "#F9E2Af"
+
 
 [colors.primary]
 # background = "#1e1d2d"

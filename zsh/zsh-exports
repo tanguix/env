@@ -19,9 +19,6 @@ unset __conda_setup
 # export neovim as editor
 export EDITOR="nvim"
 
-# make homebrew bin command usable: for example, git
-export PATH="/opt/homebrew/bin:${PATH}"
-
 
 # export LS colors
 # preview website: https://geoff.greer.fm/lscolors
