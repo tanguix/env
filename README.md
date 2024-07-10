@@ -414,6 +414,10 @@ still missing some icon even after patched, look into it later
 >> git push                                           // only have one main branch
 >> git push --set-upstream origin main                // if not branch to track
 
+(push latest one with unpush commit)
+>> git log                                            // grab the log SHA 
+>> git push origin <SHA>:branch --force-with-lease    // example 
+>> git push origin abc123:main --force-with-lease     // cover all commits not push
 
 
 
