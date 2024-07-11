@@ -398,6 +398,7 @@ still missing some icon even after patched, look into it later
 >> git status                                         // check current status
 >> git reset                                          // undo last commit 
 >> git reset --soft HEAD~                             // undo all commit 
+>> git reset --hard <git log grab SHA>                // reset to specific commit
 
 (check)
 >> git log                                            // check passed commit 
