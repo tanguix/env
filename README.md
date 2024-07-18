@@ -81,22 +81,21 @@ hover
 1) add pinyin 
 
 2) do not check "Use the CAPSLOCK key to switch to and from U.S."
-
-4) fn (do nothing)
 ```
 
 **+ Keyboard**
 ```
-*1) cursor smoothness (make hjkl moving smooth inside nvim)
+1) fn (do nothing)
+
+*2) cursor smoothness (make hjkl moving smooth inside nvim)
     + increase key repeat rate to the fastest 
     + drag Delay until repeat to the shortest
 
-2) add Unicode Hex Input (optional)
+3) add Unicode Hex Input (optional)
     - ∀: option + 2200
     - ∃: option + 2203
     - ¬: option + 00ac 
     - ∧: option + 2227 
-
 ```
 
 ### &#x2469; Keyboard Shortcuts
@@ -270,7 +269,7 @@ brew uninstall/remove xxx
 >> sudo chown -R $(whoami):admin /opt/homebrew 
 >> git clone https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git /opt/homebrew
 >> echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-(this lines is to surpress default apple git)>> echo "export PATH=/opt/homebrew/bin:$PATH" ~/.zprofile
+(this surpress default apple git, already in zsh/)>> echo "export PATH=/opt/homebrew/bin:$PATH" ~/.zprofile
 ```
 </details>
 
@@ -510,6 +509,11 @@ will cause version conflict
 # install community edition (refer to the official doc for versions)
 >> brew install mongodb-community
 
+# if run into error "brew services list"
+>> brew update-reset
+>> brew doctor
+>> brew services list
+
 # start for use
 >> brew services start mongodb-community@7.0
 >> brew services stop mongodb-community@7.0
@@ -572,6 +576,9 @@ brew install tree
 # find the inet value under 'wlp39s0', usually the last one
 >> ifconfig
 >> ip addr
+
+# more straightforward way of checking the address
+>> ifconfig | grep "inet "
 ```
 
 &#x23f5; *Setup Static IP or DHCP*
@@ -648,7 +655,9 @@ brew install tree
 
 # for tmux package manager to work in the tmux.conf 
 # first need to download it 
->> git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+>> git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm 
+>> tmux
+>> prefix + I       # for downloading necessary plugins
 ```
 
 #### &#x260d; zsh
