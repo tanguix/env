@@ -893,8 +893,9 @@ print(torch.backends.mps.is_built())
 >> tf.config.list_physical_devices('GPU')
 ```
 
-#### &#x260d; Yabai
-*{...}*
+#### &#x260d; Aerospace Tiling Window Manager 
+[tutorial_link](https://www.youtube.com/watch?v=-FoWClVHG5g)
+[latent_space_visualization](https://www.youtube.com/watch?v=o_cAOa5fMhE)
 
 #### &#x260d; C++
 &#x23f5; *Compile .cpp file and run*
