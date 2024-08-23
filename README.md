@@ -76,6 +76,24 @@ hover
 ```
 
 ### &#x2468; Keyboard
+**+ Keyboard**
+```
+*1) cursor smoothness (make hjkl moving smooth inside nvim)
+    + increase key repeat rate to the fastest 
+    + drag Delay until repeat to the shortest
+
+
+2) add Unicode Hex Input (optional)
+    - ∀: option + 2200
+    - ∃: option + 2203
+    - ¬: option + 00ac 
+    - ∧: option + 2227 
+
+
+3) fn (do nothing)
+```
+
+
 **+ input source**
 ```
 1) add pinyin 
@@ -83,20 +101,7 @@ hover
 2) do not check "Use the CAPSLOCK key to switch to and from U.S."
 ```
 
-**+ Keyboard**
-```
-1) fn (do nothing)
 
-*2) cursor smoothness (make hjkl moving smooth inside nvim)
-    + increase key repeat rate to the fastest 
-    + drag Delay until repeat to the shortest
-
-3) add Unicode Hex Input (optional)
-    - ∀: option + 2200
-    - ∃: option + 2203
-    - ¬: option + 00ac 
-    - ∧: option + 2227 
-```
 
 ### &#x2469; Keyboard Shortcuts
 
