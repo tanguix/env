@@ -76,7 +76,7 @@ hover
 ```
 
 ### &#x2468; Keyboard
-**+ Keyboard**
+**+ keyboard**
 ```
 *1) cursor smoothness (make hjkl moving smooth inside nvim)
     + increase key repeat rate to the fastest 
