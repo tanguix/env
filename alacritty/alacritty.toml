@@ -20,8 +20,10 @@ blur = true 			# finally add blur function!
 option_as_alt = "Both"		# set option key = alt key in macOS
 
 [window.dimensions]		# very nice setup for mac pro 16' screen
-columns = 235
-lines = 65
+# columns = 235
+columns = 210 # 3270 Nerd Font
+# lines = 65
+lines = 58  # 3270 Nerd Font
 
 # starting point is like 
 #      |
@@ -102,17 +104,18 @@ vi_mode_style = "Underline"
 
 # font size
 [font]
-size = 16
+size = 17 # for 3270 Nerd Font
+# size = 16
 
 
 [font.italic]
 family = "Monofur Nerd Font"
-# family = "FiraCode Nerd Font"
+# family = "3270 Nerd Font"
 style = "Italic"
 
 [font.normal]
 # family = "FiraCode Nerd Font"
-family = "Monofur Nerd Font"
+family = "3270 Nerd Font"
 style = "Regular"
 
 [font.offset]
