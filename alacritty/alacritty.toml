@@ -1,7 +1,7 @@
 
 
 # basic default directory when opening alacritty (have to be on the top)
-working_directory = "/Users/tanguix/swallow/element/projects/sh/"
+working_directory = "/Users/tanguix/swallow/element/projects/sh/shApp"
 
 
 # ----------------------------- WINDOW ------------------------------
