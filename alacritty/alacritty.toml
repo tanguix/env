@@ -1,9 +1,5 @@
 
 
-# basic default directory when opening alacritty (have to be on the top)
-working_directory = "/Users/tanguix/swallow/element/projects/sh/shApp"
-
-
 # ----------------------------- WINDOW ------------------------------
 # term color
 [env]
@@ -228,5 +224,9 @@ history = 2000
 [selection]
 save_to_clipboard = true
 semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+
+[general]
+# basic default directory when opening alacritty (have to be on the top)
+working_directory = "/Users/tanguix/swallow/element/projects/sh/shApp"
 
 
