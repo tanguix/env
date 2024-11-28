@@ -400,7 +400,6 @@ still missing some icon even after patched, look into it later
 (commit)
 >> git commit -m "commit message"                     // describe what you changed 
 >> git status                                         // check current status
->> git reset --soft HEAD-1                            // undo last commit
 >> git reset --soft HEAD~                             // undo all commit
 >> git reset --hard HEAD~1                            // same, and no change kept
 >> git reset --hard <git log grab SHA>                // reset to specific commit
