@@ -425,6 +425,14 @@ still missing some icon even after patched, look into it later
 >> git push origin abc123:main --force-with-lease     // cover all commits not push
 
 
+(push with new token)
+>> git config --global credential.helper osxkeychain  // clear old credential (OS diffs)
+>> git push -u origin main
+
+(explicitly set)
+>> git remote set-url origin https://YOUR_NEW_TOKEN@github.com/your_acc/repo.git
+
+
 
 4) large file
 ------------------------------------------------------------------------------------
