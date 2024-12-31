@@ -1424,7 +1424,6 @@ brew install --cask amethyst
 
 
 # &#x26f3; To-Do 
-- [ ] *[Yabai](https://www.youtube.com/watch?v=k94qImbFKWE) usage & configuration*
 - [ ] *Jupyter Notebook & Colab IDE configuration*
 - [ ] *Custom Command Prompt (zsh) as good as the current one without using powerlevel10k*
 
