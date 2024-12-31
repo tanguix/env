@@ -1,0 +1,123 @@
+
+
+
+#!/bin/sh
+# Script to undo git commits with interactive selection
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NOCOLOR='\033[0m'
+
+# Error handling function
+cleanup() {
+    exit_code=$?
+    if [ $exit_code -ne 0 ]; then
+        printf "\n${RED}An error occurred. No changes were made.${NOCOLOR}\n"
+    fi
+    exit $exit_code
+}
+
+# Set error handling
+set -e
+trap cleanup INT TERM EXIT
+
+# Get current branch
+current_branch=$(git rev-parse --abbrev-ref HEAD || {
+    printf "${RED}Error: Unable to determine current branch${NOCOLOR}\n"
+    exit 1
+})
+
+# Check if there are uncommitted changes
+if ! git diff --quiet HEAD || ! git diff --cached --quiet; then
+    printf "${RED}Error: You have uncommitted changes. Please commit or stash them first.${NOCOLOR}\n"
+    exit 1
+fi
+
+# Get last 10 commits
+printf "\n${GREEN}Last 10 commits on branch '${current_branch}'${NOCOLOR}\n\n"
+
+# Store commits in array and display them
+i=0
+while IFS= read -r line; do
+    commit_hashes[$i]=$(echo "$line" | cut -d' ' -f1)
+    printf "${BLUE}[$i]${NOCOLOR} %s\n" "$line"
+    i=$((i + 1))
+done << EOF
+$(git log -10 --oneline)
+EOF
+
+total_commits=$i
+
+if [ $total_commits -eq 0 ]; then
+    printf "\n${RED}No commits found${NOCOLOR}\n"
+    exit 1
+fi
+
+# Get remote tracking branch
+tracking_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "")
+
+printf "\n${YELLOW}Enter index to reset (0-%d) or Press <Enter> to undo all commit, leave (n/N):${NOCOLOR} " "$((total_commits - 1))"
+read -r index
+
+# Handle exit option
+if [ "$index" = "n" ] || [ "$index" = "N" ]; then
+    printf "\n${GREEN}Operation cancelled${NOCOLOR}\n"
+    exit 0
+fi
+
+# Handle empty input (reset to tracking branch)
+if [ -z "$index" ]; then
+    if [ -z "$tracking_branch" ]; then
+        printf "${RED}Error: No tracking branch found. Cannot reset to remote state.${NOCOLOR}\n"
+        exit 1
+    fi
+    
+    printf "\n${YELLOW}Resetting to remote tracking branch...${NOCOLOR}\n"
+    git reset --hard "@{u}" || {
+        printf "${RED}Error: Failed to reset to tracking branch${NOCOLOR}\n"
+        exit 1
+    }
+    printf "\n${GREEN}Successfully reset to remote tracking branch${NOCOLOR}\n\n"
+    exit 0
+fi
+
+# Validate input
+if ! echo "$index" | grep -q '^[0-9]\+$'; then
+    printf "${RED}Error: Invalid input. Please enter a number.${NOCOLOR}\n"
+    exit 1
+fi
+
+if [ "$index" -ge "$total_commits" ]; then
+    printf "${RED}Error: Invalid index. Please enter a number between 0 and %d${NOCOLOR}\n" "$((total_commits - 1))"
+    exit 1
+fi
+
+# Get the selected commit hash
+selected_hash="${commit_hashes[$index]}"
+
+# Confirm action
+printf "\n${YELLOW}This will reset to commit: ${commit_hashes[$index]}${NOCOLOR}\n"
+printf "${RED}Warning: This will remove all commits after this point.${NOCOLOR}\n"
+printf "Continue? (y/n): "
+read -r confirm
+
+case "$confirm" in
+    [Yy])
+        # Perform the reset
+        printf "\n${YELLOW}Resetting to selected commit...${NOCOLOR}\n"
+        git reset --hard "$selected_hash" || {
+            printf "${RED}Error: Failed to reset to selected commit${NOCOLOR}\n"
+            exit 1
+        }
+        printf "\n${GREEN}Successfully reset to commit: ${selected_hash}${NOCOLOR}\n\n"
+        ;;
+    *)
+        printf "\n${YELLOW}Operation cancelled${NOCOLOR}\n"
+        exit 0
+        ;;
+esac
+
+
