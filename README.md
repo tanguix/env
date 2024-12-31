@@ -2,7 +2,7 @@
 
 # &#x231b; System
 ```
-play with macOS setting
+play with macOS settings
 ```
 <details>
     <summary style="font-size: 2em;"><i>{...}</i></summary>
