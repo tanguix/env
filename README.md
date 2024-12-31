@@ -258,6 +258,14 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
 
+&#x23f5; *homebrew proxy setting*
+```shell
+echo 'export ALL_PROXY=socks5://127.0.0.1:your_port' > ~/.brew_proxy
+echo 'source ~/.brew_proxy' >> ~/.zprofile
+source ~/.zprofile
+```
+
+
 &#x23f5; *basic commands with brew*
 ```shell
 brew install xxx
@@ -544,6 +552,26 @@ will cause version conflict
 # better to download prebuild version through website
 >> node --version
 >> npm --version
+```
+
+
+&#x23f5; *npm proxy*
+```shell
+# 1) Temporary for a single command
+npm --proxy http://127.0.0.1:your_port install your-package
+
+
+# 2) set/unset as needed
+npm config set proxy http://127.0.0.1:7890
+npm config set https-proxy http://127.0.0.1:7890
+npm install  # do your installations
+npm config delete proxy
+npm config delete https-proxy
+
+
+# 3) .npmrc
+proxy=http://127.0.0.1:7890
+https-proxy=http://127.0.0.1:7890
 ```
 
 
