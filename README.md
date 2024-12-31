@@ -1,5 +1,4 @@
 
-
 # &#x231b; System
 ```
 play with macOS setting
