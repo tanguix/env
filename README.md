@@ -368,6 +368,12 @@ still missing some icon even after patched, look into it later
 [`.gitignore`](https://www.toptal.com/developers/gitignore): *ignore file generation*
 
 ```
+
+0) connect github with proxy
+>> git config --global http.proxy http://127.0.0.1:{port}       // set with a port
+>> git config --global --unset http.proxy                       // unset to disable
+
+
 1) Intialize/Create Local Repo
 ------------------------------------------------------------------------------------
 >> cd "any_directory"
