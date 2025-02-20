@@ -833,6 +833,9 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 &#x23f5; *conda command notes*
 ```
+# conda proxy problem
+>> conda config --set ssl_verify false  # get around with ssl if you are behind proxy
+
 # create new env 
 >> conda create -n myenv python=3.x     # python version 
 >> conda create -n myenv scipy          # with sepcific package
