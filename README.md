@@ -843,6 +843,10 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # remove conda env 
 >> conda remove --name myenv --all
 
+
+# install jupyter
+>> conda install -y jupyter
+
 # install packages using .yml in existing conda env 
 # --prune: this command remove dependencies that are no longer listed in the .yml file
 # --name myenv: sepcify which env to update
