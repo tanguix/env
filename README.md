@@ -836,6 +836,9 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # conda proxy problem
 >> conda config --set ssl_verify false  # get around with ssl if you are behind proxy
 
+# conda proxy necessary dependency
+>> pip install 'httpx[socks]'
+
 # create new env 
 >> conda create -n myenv python=3.x     # python version 
 >> conda create -n myenv scipy          # with sepcific package
