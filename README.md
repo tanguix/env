@@ -850,19 +850,27 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # install jupyter
 >> conda install -y jupyter
 
+
+# export yml package list, will export all conda and pip installed ones
+>> conda env export > environment.yml
+
+# pip list, only pip install ones
+>> pip freeze > requirements.txt    # export pip package separately
+>> pip install -r requirements.txt  # install
+
 # install packages using .yml in existing conda env 
-# --prune: this command remove dependencies that are no longer listed in the .yml file
-# --name myenv: sepcify which env to update
+--prune: this command remove dependencies that are no longer listed in the .yml file
+--name myenv: sepcify which env to update
 >> conda env update --name myenv --file xxx.yml --prune 
 
-# when you update env using .yml file, few things to notice 
-# 1) comment the "name:" section in the .yml file, 
-#    otherwise it will create another env if name is not the same as the current one
-# 2) newer version will be overrided by older version 
-#    - in my case, if tensorflow is installed with python=3.10, and pytorch is 3.9 
-#    - then tensorflow will be removed after install pytorch using .yml file 
-# 3) newer version is compatible with older version (mostly) 
-#    - install pytorch with python=3.9, then install tensorflow with python=3.10 if fine
+# when you update env using .yml file, few things to notice
+1) comment the "name:" section in the .yml file, 
+    - otherwise it will create another env if name is not the same as the current one
+2) newer version will be overrided by older version 
+    - in my case, if tensorflow is installed with python=3.10, and pytorch is 3.9 
+    - then tensorflow will be removed after install pytorch using .yml file 
+3) newer version is compatible with older version (mostly) 
+    - install pytorch with python=3.9, then install tensorflow with python=3.10 if fine
 ```
 
 &#x23f5; *pytorch*: [*official website*](https://pytorch.org) *or refer to* [*yaml file*](https://github.com/jeffheaton/app_deep_learning/blob/main/install/pytorch-install-aug-2023.ipynb)
