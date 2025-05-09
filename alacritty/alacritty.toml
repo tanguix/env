@@ -29,7 +29,7 @@ lines = 60  # 3270 Nerd Font when font size 16
 # current one is good for 16' MacBook
 [window.position]
 x = 40
-y = 120
+y = 122
 
 # !you may set some better position for larger screen
 
@@ -101,7 +101,7 @@ vi_mode_style = "Underline"
 # font size
 [font]
 size = 16 # for 3270 Nerd Font
-# size = 16
+# size = 15
 
 
 [font.italic]
@@ -227,6 +227,6 @@ semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 
 [general]
 # basic default directory when opening alacritty (have to be on the top)
-working_directory = "/Users/tanguix/swallow/element/projects/sh/shApp"
+working_directory = "/Users/tanguix/swallow/element/projects/"
 
 

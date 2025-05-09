@@ -437,6 +437,7 @@ still missing some icon even after patched, look into it later
 >> git log                                            // grab the log SHA 
 >> git push origin <SHA>:branch --force-with-lease    // example 
 >> git push origin abc123:main --force-with-lease     // cover all commits not push
+>> git push --force-with-lease origin <branch-name>   // override if remote had ahead commit
 
 
 (push with new token)
