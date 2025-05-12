@@ -7,25 +7,32 @@
 cleanup() {
     exit_code=$?
     current_sha=$1
+    push_attempted=$2
     
     if [ $exit_code -ne 0 ]; then
         printf "\n\033[0;31mAn error occurred. Starting cleanup...\033[0m\n"
         
-        # Check if we have staged changes
-        if git diff --staged --quiet; then
-            printf "No changes staged, no cleanup needed\n"
+        if [ "$push_attempted" = "true" ]; then
+            # If pushing was attempted but failed, keep the commit but inform the user
+            printf "\033[0;33mYour changes were committed but not pushed.\033[0m\n"
+            printf "You can try pushing later with: git push\n"
         else
-            printf "Unstaging changes...\n"
-            git reset
+            # Check if we have staged changes
+            if git diff --staged --quiet; then
+                printf "No changes staged, no cleanup needed\n"
+            else
+                printf "Unstaging changes...\n"
+                git reset
+            fi
+            
+            # Check if we created a new commit
+            if [ "$(git rev-parse HEAD)" != "$current_sha" ]; then
+                printf "Reverting to previous commit...\n"
+                git reset --hard $current_sha
+            fi
+            
+            printf "\033[0;32mCleanup complete. Changes are preserved but unstaged.\033[0m\n"
         fi
-        
-        # Check if we created a new commit
-        if [ "$(git rev-parse HEAD)" != "$current_sha" ]; then
-            printf "Reverting to previous commit...\n"
-            git reset --hard $current_sha
-        fi
-        
-        printf "\033[0;32mCleanup complete. Repository is back to original state.\033[0m\n"
     fi
     
     # Remove temporary files if they exist
@@ -40,8 +47,11 @@ set -e
 # Store initial state
 initial_sha=$(git rev-parse HEAD || echo "")
 
+# Initialize push_attempted flag
+push_attempted=false
+
 # Set up cleanup trap for interrupts and errors
-trap 'cleanup "$initial_sha"' INT TERM EXIT
+trap 'cleanup "$initial_sha" "$push_attempted"' INT TERM EXIT
 
 # Get repository information
 repo_url=$(git config --get remote.origin.url || {
@@ -129,7 +139,7 @@ case "$REPLY" in
             if [ -z "$commit_message" ]; then
                 printf "\033[0;31mError: Commit message cannot be empty\033[0m\n"
                 exit 1
-            fi
+            }
             
             # Commit changes
             printf "Committing changes...\n"
@@ -138,6 +148,9 @@ case "$REPLY" in
                 exit 1
             }
         fi
+        
+        # Set push_attempted flag to true before pushing
+        push_attempted=true
         
         # Push changes with retry logic
         max_retries=3
@@ -173,5 +186,6 @@ case "$REPLY" in
         exit 1
         ;;
 esac
+
 
 
