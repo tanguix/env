@@ -1,5 +1,4 @@
 
-
 #!/bin/sh
 # Make script work in all POSIX shells
 
@@ -139,7 +138,7 @@ case "$REPLY" in
             if [ -z "$commit_message" ]; then
                 printf "\033[0;31mError: Commit message cannot be empty\033[0m\n"
                 exit 1
-            }
+            fi
             
             # Commit changes
             printf "Committing changes...\n"
@@ -186,6 +185,3 @@ case "$REPLY" in
         exit 1
         ;;
 esac
-
-
-
