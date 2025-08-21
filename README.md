@@ -834,6 +834,10 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 &#x23f5; *conda command notes*
 ```
+# this is working, try it
+# Unset all proxy environment variables for this session
+unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy ALL_PROXY NO_PROXY
+
 # conda proxy problem
 >> conda config --set ssl_verify false  # get around with ssl if you are behind proxy
 

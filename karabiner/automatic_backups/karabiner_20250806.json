@@ -54,21 +54,6 @@
                     }
                 ]
             },
-            "devices": [
-                {
-                    "identifiers": {
-                        "is_keyboard": true,
-                        "product_id": 20565,
-                        "vendor_id": 12815
-                    },
-                    "simple_modifications": [
-                        {
-                            "from": { "key_code": "right_shift" },
-                            "to": [{ "key_code": "f5" }]
-                        }
-                    ]
-                }
-            ],
             "name": "Default profile",
             "selected": true,
             "simple_modifications": [
