@@ -4,43 +4,6 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "New Rule (change left_shift+caps_lock to page_down, right_shift+caps_lock to left_command+mission_control)",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "caps_lock",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift"],
-                                        "optional": ["any"]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "page_down",
-                                        "modifiers": []
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "caps_lock",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift"],
-                                        "optional": ["any"]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "apple_vendor_keyboard_key_code": "mission_control",
-                                        "modifiers": ["left_command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Change command + h/j/k/l to Arrows",
                         "manipulators": [
                             {
@@ -95,11 +58,15 @@
                 {
                     "identifiers": {
                         "is_keyboard": true,
-                        "is_pointing_device": true,
-                        "product_id": 2,
-                        "vendor_id": 14477
+                        "product_id": 20565,
+                        "vendor_id": 12815
                     },
-                    "ignore": false
+                    "simple_modifications": [
+                        {
+                            "from": { "key_code": "right_shift" },
+                            "to": [{ "key_code": "f5" }]
+                        }
+                    ]
                 }
             ],
             "name": "Default profile",

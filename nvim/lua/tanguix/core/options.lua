@@ -1,4 +1,7 @@
 
+
+-- options.lua
+
 ------------------- Default File Explorer Style (tree) -------------------
 vim.cmd("let g:netrw_liststyle = 3")
 

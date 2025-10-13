@@ -1,5 +1,8 @@
 
--- lot's of useful shortcut commands, explore them when you have time 
+
+-- lspconfig.lua
+
+-- lot's of useful shortcut commands, explore them when you have time
 -- 1) cursor on variable: <leader>rn, rename the variable and all variable within this file get update to new name
 
 return {
@@ -9,13 +12,12 @@ return {
     "hrsh7th/cmp-nvim-lsp",
     { "antosha417/nvim-lsp-file-operations", config = true },
     { "folke/neodev.nvim", opts = {} },
+    "williamboman/mason.nvim",
+    "williamboman/mason-lspconfig.nvim",
   },
   config = function()
     -- import lspconfig plugin
     local lspconfig = require("lspconfig")
-
-    -- import mason_lspconfig plugin
-    local mason_lspconfig = require("mason-lspconfig")
 
     -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
@@ -75,57 +77,72 @@ return {
     -- used to enable autocompletion (assign to every lsp server config)
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
-    -- Change the Diagnostic symbols in the sign column (gutter)
-    -- icons for error notification
-    local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-    for type, icon in pairs(signs) do
-      local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-    end
+    -- Configure diagnostic signs (modern approach)
+    vim.diagnostic.config({
+      signs = {
+        text = {
+          [vim.diagnostic.severity.ERROR] = " ",
+          [vim.diagnostic.severity.WARN] = " ",
+          [vim.diagnostic.severity.HINT] = "󰠠 ",
+          [vim.diagnostic.severity.INFO] = " ",
+        },
+      },
+      virtual_text = {
+        prefix = "●",
+        spacing = 4,
+      },
+      update_in_insert = false,
+      underline = true,
+      severity_sort = true,
+      float = {
+        border = "rounded",
+        source = "always",
+        header = "",
+        prefix = "",
+      },
+    })
 
-    mason_lspconfig.setup_handlers({
-      -- default handler for installed servers
-      function(server_name)
-        lspconfig[server_name].setup({
-          capabilities = capabilities,
-        })
-      end,
-      ["svelte"] = function()
-        -- configure svelte server
-        lspconfig["svelte"].setup({
+    -- Configure servers directly (modern approach)
+    local servers = {
+      "ts_ls",
+      "html", 
+      "cssls",
+      "svelte",
+      "graphql",
+      "emmet_ls",
+      "prismals",
+      "pyright",
+    }
+
+    -- Setup each server individually
+    for _, server in ipairs(servers) do
+      if server == "svelte" then
+        lspconfig.svelte.setup({
           capabilities = capabilities,
           on_attach = function(client, bufnr)
             vim.api.nvim_create_autocmd("BufWritePost", {
               pattern = { "*.js", "*.ts" },
               callback = function(ctx)
-                -- Here use ctx.match instead of ctx.file
                 client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
               end,
             })
           end,
         })
-      end,
-      -- ["graphql"] = function()
-      --   -- configure graphql language server
-      --   lspconfig["graphql"].setup({
-      --     capabilities = capabilities,
-      --     filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-      --   })
-      -- end,
-      ["emmet_ls"] = function()
-        -- configure emmet language server
-        lspconfig["emmet_ls"].setup({
+      elseif server == "graphql" then
+        lspconfig.graphql.setup({
+          capabilities = capabilities,
+          filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
+        })
+      elseif server == "emmet_ls" then
+        lspconfig.emmet_ls.setup({
           capabilities = capabilities,
           filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
         })
-      end,
-      ["lua_ls"] = function()
-        -- configure lua server (with special settings)
-        lspconfig["lua_ls"].setup({
+      elseif server == "lua_ls" then
+        lspconfig.lua_ls.setup({
           capabilities = capabilities,
           settings = {
             Lua = {
-              -- make the language server recognize "vim" global
               diagnostics = {
                 globals = { "vim" },
               },
@@ -135,8 +152,14 @@ return {
             },
           },
         })
-      end,
-    })
+      else
+        -- Default setup for other servers
+        lspconfig[server].setup({
+          capabilities = capabilities,
+        })
+      end
+    end
   end,
 }
+
 

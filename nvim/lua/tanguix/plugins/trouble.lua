@@ -1,3 +1,6 @@
+
+-- trouble.lua
+
 -- toggle all warnings, errors, etc in the bottom tab of the buffer
 -- 1) remember the first shortcut right now is enough
 -- *but it seems to have some problem that I don't know

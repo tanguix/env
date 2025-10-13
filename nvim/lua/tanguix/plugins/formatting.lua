@@ -1,4 +1,8 @@
--- formatting
+
+
+-- formatting.lua
+
+
 return {
   "stevearc/conform.nvim",
   event = { "BufReadPre", "BufNewFile" },
@@ -20,7 +24,7 @@ return {
         graphql = { "prettier" },
         liquid = { "prettier" },
         lua = { "stylua" },
-        python = { "isort", "black" }, -- order is important (first isort then black), see documentation
+        python = {}, -- order is important (first isort then black), see documentation
       },
       ------------ uncomment the following lines, if you want auto-formatting on save (:w)
       -- format_on_save = {

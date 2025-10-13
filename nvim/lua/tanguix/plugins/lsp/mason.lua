@@ -1,6 +1,6 @@
 
--- mason language server 
 
+-- mason.lua language server 
 return {
   "williamboman/mason.nvim",
   dependencies = {
@@ -8,14 +8,16 @@ return {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
   },
   config = function()
+    -- Force Homebrew Python BEFORE Mason loads
+    -- local homebrew_python = "/opt/homebrew/bin/python3"
+    -- vim.env.PATH = "/opt/homebrew/bin:" .. vim.env.PATH
+    
     -- import mason
     local mason = require("mason")
-
     -- import mason-lspconfig
     local mason_lspconfig = require("mason-lspconfig")
-
     local mason_tool_installer = require("mason-tool-installer")
-
+    
     -- enable mason and configure icons
     mason.setup({
       ui = {
@@ -25,34 +27,37 @@ return {
           package_uninstalled = "✗",
         },
       },
+      pip = {
+        upgrade_pip = true,
+      },
+      PATH = "prepend",
     })
-
+    
     mason_lspconfig.setup({
       -- list of servers for mason to install
       ensure_installed = {
-        -- TODO: c++ lsp might needed in the future
         "tsserver",
         "html",
         "cssls",
-        -- "tailwindcss",  -- do I need this?
         "svelte",
-        -- "lua_ls",
         "graphql",
         "emmet_ls",
         "prismals",
-        "pyright",    -- python 
+        "pyright",
       },
     })
-
+    
     mason_tool_installer.setup({
       ensure_installed = {
-        "prettier",     -- prettier formatter
-        "stylua",       -- lua formatter
-        "isort",        -- python formatter
-        "black",        -- python formatter
-        "pylint",
+        "prettier",
+        "stylua",
+        -- "pylint",
+        -- "black",
+        -- "isort",
         "eslint_d",
       },
     })
   end,
 }
+
+
