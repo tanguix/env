@@ -1,5 +1,3 @@
-
-
 # Flask + Svelte + PostgreSQL Application
 
 A full-stack application with Flask backend, SvelteKit frontend, and PostgreSQL database.
@@ -9,6 +7,7 @@ A full-stack application with Flask backend, SvelteKit frontend, and PostgreSQL 
 - [Prerequisites](#prerequisites)
 - [Project Structure](#project-structure)
 - [Database Setup (PostgreSQL)](#database-setup-postgresql)
+- [Environment Configuration](#environment-configuration)
 - [Backend Setup (Flask)](#backend-setup-flask)
 - [Frontend Setup (SvelteKit)](#frontend-setup-sveltekit)
 - [Running the Application](#running-the-application)
@@ -39,7 +38,7 @@ project-root/
 ├── client/                 # SvelteKit frontend
 │   ├── src/
 │   ├── static/
-│   ├── .env               # Frontend environment variables
+│   ├── .env               # ⚠️ Frontend environment variables (YOU MUST CREATE THIS)
 │   ├── package.json
 │   └── svelte.config.js
 ├── server/                # Flask backend
@@ -49,7 +48,7 @@ project-root/
 │   │   ├── postgreDB/
 │   │   ├── tools/
 │   │   ├── utils/
-│   │   ├── .env          # Backend environment variables
+│   │   ├── .env          # ⚠️ Backend environment variables (YOU MUST CREATE THIS)
 │   │   └── __init__.py
 │   ├── scripts/
 │   ├── tests/
@@ -103,7 +102,6 @@ brew services list | grep postgresql
 When PostgreSQL is installed via Homebrew, it creates a superuser with your Mac username (NOT "postgres"). To find your username:
 ```bash
 whoami
-# Example output: xrc
 ```
 
 You can connect to PostgreSQL using:
@@ -119,7 +117,6 @@ psql -U your_mac_username -d postgres
 - Download from [PostgreSQL macOS Downloads](https://www.postgresql.org/download/macosx/)
 - Download the official installer or Postgres.app
 - Run installer and follow the setup wizard
-- This method creates a traditional `postgres` superuser
 
 **Windows:**
 - Download installer from [PostgreSQL Downloads](https://www.postgresql.org/download/windows/)
@@ -177,15 +174,7 @@ You should see output like:
 psql -d postgres -c "\du"
 ```
 
-Output example:
-```
-                                   List of roles
- Role name |                         Attributes                         
------------+------------------------------------------------------------
- xrc       | Superuser, Create role, Create DB, Replication, Bypass RLS
-```
-
-**Remember your superuser name** - you'll need it for pgAdmin!
+**Remember your superuser name** - you'll need it for pgAdmin and database creation!
 
 ### 4. Create Database and User
 
@@ -213,6 +202,7 @@ Once you're in the `psql` prompt (you'll see `postgres=#`), run these commands:
 ```sql
 -- Create your application user with a secure password
 -- This user will be used by your Flask application
+-- ⚠️ IMPORTANT: You MUST set a password - PostgreSQL requires authentication
 CREATE USER tanguix_user WITH PASSWORD 'your_secure_password_here';
 
 -- Create your development database
@@ -257,41 +247,18 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO tanguix_user
  template1      | xrc          | UTF8     | en_US.UTF-8 | en_US.UTF-8
 ```
 
-**What you should see after `\du`:**
-```
-                                   List of roles
- Role name    |                         Attributes                         
---------------+------------------------------------------------------------
- tanguix_user |                                                             ← Your new user!
- xrc          | Superuser, Create role, Create DB, Replication, Bypass RLS
-```
-
-**Common psql commands for reference:**
-```bash
-\l                          # List all databases
-\c database_name            # Connect to a database
-\du                         # List all users/roles
-\dt                         # List all tables in current database
-\d table_name               # Describe a specific table
-\dn                         # List all schemas
-\q                          # Quit psql
-SELECT current_database();  # Show current database
-SELECT current_user;        # Show current user
-```
-
 #### **Option B: pgAdmin GUI Method (Visual Step-by-Step)**
 
 **Step 1: Launch pgAdmin**
 - Open pgAdmin (first launch will ask you to create a master password for pgAdmin itself)
-- This master password is just for pgAdmin, not for PostgreSQL
 
 **Step 2: Connect to PostgreSQL Server**
 
 1. In the left sidebar, right-click on **"Servers"**
 2. Select **"Register"** → **"Server..."**
 
-3. **General tab:**
-   - Name: `Local PostgreSQL` (you can name it anything)
+3. **General tab:** 
+   - Name = `Local PostgreSQL` (you can name it anything)
 
 4. **Connection tab:**
    - Host name/address: `localhost`
@@ -321,6 +288,7 @@ You should now see "Local PostgreSQL" in the left sidebar with a green icon (con
    - Password: `your_secure_password_here` (choose a strong password)
    - Password confirmation: Re-enter the same password
    - Account expires: Leave empty (never expires)
+   - **⚠️ CRITICAL: Remember this password! You will need it in `server/app/.env`**
 
 6. **Privileges tab:**
    - Can login?: **Toggle ON** (must be YES/ON)
@@ -335,6 +303,11 @@ You should now see "Local PostgreSQL" in the left sidebar with a green icon (con
 7. Click **"Save"**
 
 You should now see `tanguix_user` under Login/Group Roles.
+
+**Important Notes:**
+- The password is set in the **"Definition"** tab, not the "Security" tab
+- PostgreSQL **requires** a password for authentication by default
+- This password must **exactly match** what you put in `server/app/.env` later
 
 **Step 4: Create the Database (tanguix_dev_db)**
 
@@ -361,20 +334,7 @@ You should now see `tanguix_dev_db` under Databases, with owner = tanguix_user.
 
 This step is essential for your Flask app to create and access tables!
 
-**Method 1: Using Properties Dialog**
-
-1. In the left sidebar, expand **"Databases"** → **"tanguix_dev_db"** → **"Schemas"**
-2. Right-click on **"public"** schema → **"Properties"**
-3. Go to **"Security"** tab
-4. Look for the list of privileges
-5. Click the **"+"** button at the top-right of the privileges list
-6. In the new row:
-   - **Grantee**: Select **"tanguix_user"** from dropdown
-   - **Privileges**: Check **ALL** boxes (USAGE, CREATE, etc.)
-   - Or manually check: **USAGE** and **CREATE** (minimum required)
-7. Click **"Save"**
-
-**Method 2: Using Query Tool (Faster and Recommended)**
+**Method: Using Query Tool (Recommended)**
 
 1. Right-click on **"tanguix_dev_db"** in the left sidebar
 2. Select **"Query Tool"**
@@ -415,56 +375,7 @@ In the left sidebar, you should now see:
    - Run: `SELECT current_user, current_database();`
    - Should show: `tanguix_user` and `tanguix_dev_db`
 
-### 5. Understanding the Connection Flow
-
-Here's how everything connects together:
-
-```
-┌─────────────────────────────────────────────────────────┐
-│ PostgreSQL Server (localhost:5432)                      │
-│                                                          │
-│  ┌──────────────────┐      ┌──────────────────┐       │
-│  │ postgres         │      │ tanguix_dev_db   │       │
-│  │ (default admin   │      │ (your app        │       │
-│  │  database)       │      │  database)       │       │
-│  └──────────────────┘      └──────────────────┘       │
-│                                     ↑                    │
-│                                     │                    │
-│                                     │ owns & has full    │
-│                                     │ privileges         │
-│                                     │                    │
-│  ┌──────────────────────────────────┴─────────┐        │
-│  │ tanguix_user (database user/role)          │        │
-│  │ - Can login                                 │        │
-│  │ - Owns tanguix_dev_db                      │        │
-│  │ - Has all privileges on tanguix_dev_db    │        │
-│  └────────────────────────────────────────────┘        │
-└─────────────────────────────────────────────────────────┘
-                            ↑
-                            │
-                    reads credentials from
-                            │
-                   ┌────────┴─────────┐
-                   │ server/app/.env  │
-                   │                  │
-                   │ POSTGRES_USER=   │
-                   │   tanguix_user   │
-                   │ POSTGRES_DB_NAME=│
-                   │   tanguix_dev_db │
-                   └────────┬─────────┘
-                            │
-                    constructs connection
-                            │
-              postgresql://tanguix_user:password@localhost:5432/tanguix_dev_db
-                            │
-                            ↓
-                   ┌─────────────────┐
-                   │ Flask Backend   │
-                   │ (server/run.py) │
-                   └─────────────────┘
-```
-
-### 6. Test Database Connection
+### 5. Test Database Connection
 
 Before proceeding to the backend setup, verify you can connect to your new database:
 
@@ -501,21 +412,55 @@ SELECT current_user, current_database();
 \q
 ```
 
-✅ **Database setup is complete!** You're now ready to configure your Flask backend.
+✅ **Database setup is complete!** You're now ready to configure your backend.
 
-## 🐍 Backend Setup (Flask)
+## 🔐 Environment Configuration
 
-Now that your database is ready, let's set up the Flask backend to connect to it.
+### ⚠️ CRITICAL: Create TWO Environment Files
 
-### 1. Configure Backend Environment Variables
+This project requires **TWO separate `.env` files** - one for frontend and one for backend. **You MUST create both files manually.**
 
-Create `server/app/.env` file with the following content:
+---
+
+### 1. Frontend Environment File
+
+**📍 Location:** `client/.env`
+
+**⚠️ YOU MUST CREATE THIS FILE MANUALLY**
+
+Create a new file at `client/.env` and add this single line:
+
+```env
+VITE_BACKEND_HOST=http://localhost:5000
+```
+
+**That's it!** The frontend only needs to know where the backend is.
+
+**Notes:**
+- `VITE_` prefix is **REQUIRED** for SvelteKit to expose the variable to the browser
+- Use `http://localhost:5000` for local development
+- Update to your backend's IP if accessing from another device (e.g., `http://192.168.1.100:5000`)
+
+**Common mistake:** Forgetting to create this file will cause frontend errors like:
+```
+GET http://localhost:5173/undefined/auth/public/login 404 (Not Found)
+```
+
+---
+
+### 2. Backend Environment File
+
+**📍 Location:** `server/app/.env`
+
+**⚠️ YOU MUST CREATE THIS FILE MANUALLY**
+
+Create a new file at `server/app/.env` with the following content:
 
 ```env
 # ================================
 # PostgreSQL Database Configuration
 # ================================
-# These values MUST match what you created in PostgreSQL!
+# ⚠️ These values MUST match what you created in PostgreSQL!
 
 # Database server location (usually localhost for development)
 POSTGRES_HOST=localhost
@@ -523,15 +468,15 @@ POSTGRES_HOST=localhost
 # PostgreSQL default port
 POSTGRES_PORT=5432
 
-# Database user we created (tanguix_user)
+# Database user you created (must match Step 4 in database setup)
 POSTGRES_USER=tanguix_user
 
 # Password you set when creating tanguix_user
-# ⚠️ IMPORTANT: Use the EXACT password you set in Step 4
+# ⚠️ CRITICAL: Use the EXACT password you set in PostgreSQL
 POSTGRES_PASSWORD=your_secure_password_here
 
-# Database name we created for development
-# ⚠️ We use tanguix_dev_db specifically for application development
+# Database name you created for development
+# We use tanguix_dev_db specifically for application development
 POSTGRES_DB_NAME=tanguix_dev_db
 
 # ================================
@@ -565,9 +510,9 @@ PRODUCTION_URL=https://your-production-domain.com
 # Staging frontend URL
 STAGING_URL=https://staging.your-domain.com
 
-# Backend IP (fixed for consistent backend URL)
+# Backend IP (for network access)
 # To find your local IP: hostname -I (Linux) or ipconfig (Windows) or ifconfig (macOS)
-LOCAL_IP=192.168.110.52
+LOCAL_IP=192.168.1.100
 
 # ================================
 # Database Management
@@ -579,13 +524,13 @@ AUTO_CREATE_TABLES=True
 INIT_SAMPLE_DATA=False
 
 # ================================
-# Email Configuration
+# Email Configuration (Optional)
 # ================================
 # Email password for sending notifications (if using email features)
 MAIL_PASSWORD=your_fastmail_app_password_here
 
 # ================================
-# Security
+# Security (Optional)
 # ================================
 # Admin token (optional, for admin operations)
 ADMIN_TOKEN=your_admin_token_here
@@ -612,35 +557,49 @@ BASE_HOST_DIR=/Users/yourusername/appdev
 # FRONTEND_URLS=https://your-production-domain.com
 ```
 
-**⚠️ CRITICAL: Verify These Values Match Your PostgreSQL Setup**
+---
 
-| Environment Variable | What to Enter | Example |
-|---------------------|---------------|---------|
-| `POSTGRES_HOST` | Database server location | `localhost` (for local development) |
-| `POSTGRES_PORT` | PostgreSQL port | `5432` (default PostgreSQL port) |
-| `POSTGRES_USER` | Database user you created | `tanguix_user` (MUST match Step 4) |
-| `POSTGRES_PASSWORD` | Password you set for tanguix_user | `your_secure_password_here` |
-| `POSTGRES_DB_NAME` | Database name you created | `tanguix_dev_db` (for development) |
+### ⚠️ Configuration Checklist
 
-**How Flask uses these values:**
-1. Flask reads `server/app/.env` on startup
-2. Constructs connection string: `postgresql://tanguix_user:your_password@localhost:5432/tanguix_dev_db`
-3. SQLAlchemy uses this to connect to PostgreSQL
-4. All database operations happen within `tanguix_dev_db`
+Before proceeding, verify:
 
-**Security Notes:**
-- Never commit `.env` to git (already in `.gitignore`)
-- Use strong passwords for `POSTGRES_PASSWORD`
-- Change `SECRET_KEY` before production
-- Keep all credentials secure
+- [ ] `client/.env` exists with `VITE_BACKEND_HOST`
+- [ ] `server/app/.env` exists with all database credentials
+- [ ] `POSTGRES_PASSWORD` in `server/app/.env` matches the password you set in PostgreSQL
+- [ ] `POSTGRES_USER` is `tanguix_user`
+- [ ] `POSTGRES_DB_NAME` is `tanguix_dev_db`
+- [ ] Both `.env` files are in `.gitignore` (never commit them!)
 
-### 2. Navigate to Server Directory
+**How to verify database credentials match:**
+
+```bash
+# Try connecting with the credentials from your .env
+psql -U tanguix_user -d tanguix_dev_db -h localhost
+# If prompted, enter the password from POSTGRES_PASSWORD
+# If it works, your credentials are correct!
+```
+
+---
+
+### 🔒 Security Notes
+
+- **Never commit `.env` files to git** - They contain sensitive credentials
+- `.env` files should already be in `.gitignore`
+- Use strong passwords for `POSTGRES_PASSWORD` in production
+- Change `SECRET_KEY` before production deployment
+- Keep `ADMIN_TOKEN` and `MAIL_PASSWORD` secure
+
+## 🐍 Backend Setup (Flask)
+
+Now that your database and environment files are configured, let's set up the Flask backend.
+
+### 1. Navigate to Server Directory
 
 ```bash
 cd server
 ```
 
-### 3. Create Conda Environment
+### 2. Create Conda Environment
 
 ```bash
 # Create a new conda environment with Python 3.10
@@ -652,10 +611,13 @@ conda activate flask-app
 
 **Note:** Replace `flask-app` with your preferred environment name.
 
-### 4. Install Dependencies
+### 3. Install Dependencies
 
 ```bash
-# Install from requirements.txt
+# Install Flask-SQLAlchemy (REQUIRED - without this you'll get mock db errors)
+pip install Flask-SQLAlchemy
+
+# Install all other dependencies from requirements.txt
 pip install -r requirements.txt
 ```
 
@@ -668,7 +630,7 @@ conda install flask sqlalchemy psycopg2 -y
 pip install -r requirements.txt
 ```
 
-### 5. Verify Installation
+### 4. Verify Installation
 
 ```bash
 # Check installed packages
@@ -677,11 +639,20 @@ pip list
 # Or use conda
 conda list
 
+# Verify Flask-SQLAlchemy is installed (CRITICAL)
+python -c "import flask_sqlalchemy; print('Flask-SQLAlchemy version:', flask_sqlalchemy.__version__)"
+
 # Verify psycopg2 is installed (PostgreSQL adapter for Python)
 python -c "import psycopg2; print('psycopg2 version:', psycopg2.__version__)"
 ```
 
-### 6. Initialize Database Tables
+**If Flask-SQLAlchemy is not installed, you'll see errors like:**
+```
+[DEBUG] Flask-SQLAlchemy not available, creating mock db object
+Error finding user by username admin: 'NoneType' object has no attribute 'query'
+```
+
+### 5. Initialize Database Tables
 
 Now that your Flask environment is set up and `.env` is configured, initialize your database schema:
 
@@ -701,15 +672,19 @@ python setup_database.py
 2. Connects to PostgreSQL as `tanguix_user`
 3. Connects to `tanguix_dev_db` database
 4. Creates all necessary tables based on your models
-5. Optionally initializes sample data (if `INIT_SAMPLE_DATA=True`)
+5. Creates a default admin user with username `admin` and password `iamyourfather`
 
 **Expected output:**
 ```
-Connecting to database...
-Connected successfully!
-Creating tables...
-Tables created successfully!
-Database initialization complete.
+✅ PostgreSQL is running (admin user: xrc)
+🔧 Creating PostgreSQL user: tanguix_user
+✅ User 'tanguix_user' created successfully with password
+🔧 Creating database: tanguix_dev_db
+✅ Database 'tanguix_dev_db' created successfully
+✅ Schema privileges granted successfully
+🧪 Testing connection as application user 'tanguix_user'...
+✅ Connection successful!
+🎉 Database setup completed successfully!
 ```
 
 **Verify tables were created:**
@@ -721,15 +696,19 @@ psql -U tanguix_user -d tanguix_dev_db -h localhost
 # Inside psql, list all tables
 \dt
 
-# You should see your application tables listed
-# Describe a specific table
-\d table_name
+# Check the default admin user
+SELECT username, role, status FROM auth.users WHERE username = 'admin';
+
+# You should see:
+#  username | role  | status 
+# ----------+-------+--------
+#  admin    | ADMIN | active
 
 # Exit
 \q
 ```
 
-### 7. Run Backend Server
+### 6. Run Backend Server
 
 ```bash
 # Make sure conda environment is activated
@@ -741,59 +720,67 @@ python run.py
 
 **Expected output:**
 ```
+======================================================================
+🌐 CORS Configuration - Network Origins
+======================================================================
+✓ FRONTEND_URLS found: 4 origins
+  - http://localhost:5173
+  - http://localhost:3000
+  - http://localhost:4173
+  - http://127.0.0.1:5173
+----------------------------------------------------------------------
+📋 Total CORS origins allowed: 7
+🖥️  Backend will be accessible at: http://127.0.0.1:5000
+======================================================================
+
  * Serving Flask app 'app'
  * Debug mode: on
-WARNING: This is a development server. Do not use it in a production deployment.
- * Running on http://localhost:5000
-Press CTRL+C to quit
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.x.x:5000
 ```
 
-The backend should now be running at `http://localhost:5000` (or your configured IP).
+The backend should now be running at `http://localhost:5000`.
 
 **Test the backend:**
 ```bash
 # In another terminal
-curl http://localhost:5000
+curl http://localhost:5000/auth/public/health
 
-# Or open in browser: http://localhost:5000
+# Or open in browser: http://localhost:5000/auth/public/health
 ```
 
 ✅ **Backend setup is complete!**
 
+### 7. Default Login Credentials
+
+After initialization, you can login with:
+- **Username:** `admin`
+- **Password:** `iamyourfather`
+
+**⚠️ Important:** Change this password immediately after first login in production!
+
 ## 🎨 Frontend Setup (SvelteKit)
 
-### 1. Configure Frontend Environment Variables
-
-Create `client/.env` file:
-
-```env
-# Backend API URL
-# ⚠️ Update this with your actual backend IP address and port
-VITE_BACKEND_HOST=http://192.168.110.52:5000
-
-# Or use localhost for local development
-# VITE_BACKEND_HOST=http://localhost:5000
-
-# Frontend host (optional, for reference)
-# VITE_FRONTEND_HOST=http://localhost:5173
-```
-
-**⚠️ IMPORTANT: Two Separate .env Files Required**
-
-This project uses **TWO** `.env` files:
-1. `client/.env` - Frontend configuration (Vite/SvelteKit)
-2. `server/app/.env` - Backend configuration (Flask/PostgreSQL)
-
-**Note:** 
-- `VITE_` prefix is **required** for SvelteKit to expose variables to the browser
-- Update the IP address to match your backend server IP
-- For local development, `http://localhost:5000` is fine
-- Port 5000 is the default Flask port
-
-### 2. Navigate to Client Directory
+### 1. Navigate to Client Directory
 
 ```bash
 cd client
+```
+
+### 2. Verify Environment File Exists
+
+**⚠️ CRITICAL CHECK:**
+
+```bash
+# Check if .env exists
+ls -la .env
+
+# If it doesn't exist, CREATE IT NOW:
+echo "VITE_BACKEND_HOST=http://localhost:5000" > .env
+
+# Verify it was created correctly
+cat .env
+# Should show: VITE_BACKEND_HOST=http://localhost:5000
 ```
 
 ### 3. Install Dependencies
@@ -826,7 +813,13 @@ Open your browser and navigate to:
 http://localhost:5173
 ```
 
-You should see your SvelteKit application. It will make API calls to your Flask backend at the URL specified in `client/.env`.
+You should see your SvelteKit application login page.
+
+**Test the login:**
+- Username: `admin`
+- Password: `iamyourfather`
+
+If you see errors like `GET http://localhost:5173/undefined/auth/public/login`, it means `client/.env` is missing or incorrect!
 
 ✅ **Frontend setup is complete!**
 
@@ -852,11 +845,16 @@ npm run dev
 ### Accessing the App
 
 - **Frontend UI:** http://localhost:5173
-- **Backend API:** http://localhost:5000 (or your configured IP)
+- **Backend API:** http://localhost:5000
 - **Database:** Accessed via Flask backend using `tanguix_user` → `tanguix_dev_db`
 - **pgAdmin:** Manage database visually (if installed)
 
-### Complete System Overview
+### Default Login Credentials
+
+- **Username:** `admin`
+- **Password:** `iamyourfather`
+
+### Complete System Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -868,8 +866,10 @@ npm run dev
 │  └────────────────┘                      │  (client/)   │  │
 │                                           └──────┬───────┘  │
 │                                                  │          │
+│                                         reads client/.env   │
+│                                         VITE_BACKEND_HOST   │
+│                                                  │          │
 │                                           API calls         │
-│                                           (VITE_BACKEND)    │
 │                                                  │          │
 │                                                  ↓          │
 │                                           ┌──────────────┐  │
@@ -936,6 +936,9 @@ psql -d postgres -c "CREATE DATABASE tanguix_dev_db OWNER tanguix_user;"
 -- Show current database and user
 SELECT current_database(), current_user;
 
+-- Check admin user
+SELECT username, role, status FROM auth.users WHERE username = 'admin';
+
 -- Count rows in a table
 SELECT COUNT(*) FROM table_name;
 
@@ -986,6 +989,7 @@ conda deactivate
 conda env remove -n flask-app
 conda create -n flask-app python=3.10 -y
 conda activate flask-app
+pip install Flask-SQLAlchemy
 pip install -r requirements.txt
 
 # Run database initialization
@@ -1050,13 +1054,87 @@ npm uninstall package-name
 
 ## 🐛 Troubleshooting
 
+### Environment File Issues
+
+**"undefined" in frontend URLs (e.g., `http://localhost:5173/undefined/auth/login`):**
+
+This means `client/.env` is missing or `VITE_BACKEND_HOST` is not set!
+
+```bash
+# Check if .env exists
+ls -la client/.env
+
+# If it doesn't exist, create it:
+echo "VITE_BACKEND_HOST=http://localhost:5000" > client/.env
+
+# Verify the content
+cat client/.env
+
+# Restart the frontend dev server
+cd client
+npm run dev
+```
+
+**Verify in browser console:**
+```javascript
+console.log(import.meta.env.VITE_BACKEND_HOST)
+// Should show: http://localhost:5000
+// NOT: undefined
+```
+
+### Backend Issues
+
+**"Flask-SQLAlchemy not available, creating mock db object":**
+
+Flask-SQLAlchemy is not installed!
+
+```bash
+conda activate flask-app
+pip install Flask-SQLAlchemy
+python run.py  # Restart server
+```
+
+**"'NoneType' object has no attribute 'query'":**
+
+This happens when Flask-SQLAlchemy is not properly installed. See above fix.
+
+**Port 5000 already in use:**
+```bash
+# Find process using port 5000
+lsof -i :5000  # macOS/Linux
+netstat -ano | findstr :5000  # Windows
+
+# Kill the process
+kill -9 <PID>  # macOS/Linux
+taskkill /PID <PID> /F  # Windows
+```
+
+**Database connection error:**
+- Verify PostgreSQL is running: `pg_isready`
+- Check `server/app/.env` credentials match your database
+- Test connection manually: `psql -U tanguix_user -d tanguix_dev_db -h localhost`
+- Verify `.env` file exists and has correct values
+
+**Import errors / Module not found:**
+```bash
+# Make sure conda environment is activated
+conda activate flask-app
+conda env list  # Check which environment is active
+
+# Reinstall dependencies
+pip install -r requirements.txt
+
+# Check if specific package is installed
+python -c "import package_name"
+```
+
 ### Database Issues
 
 **"role 'postgres' does not exist" error (macOS Homebrew):**
 
 This is very common with Homebrew PostgreSQL installations. Homebrew creates a superuser with your Mac username instead of "postgres".
 
-**Solution 1: Use your Mac username**
+**Solution: Use your Mac username**
 ```bash
 # Find your username
 whoami
@@ -1069,19 +1147,6 @@ psql -U your_mac_username -d postgres
 ```
 
 In pgAdmin, use your Mac username instead of "postgres" when connecting.
-
-**Solution 2: Create the "postgres" superuser**
-```bash
-# Connect with your Mac username first
-psql -d postgres
-
-# Create postgres role
-CREATE ROLE postgres WITH SUPERUSER CREATEDB CREATEROLE LOGIN;
-ALTER ROLE postgres WITH PASSWORD 'your_password';
-
-# Exit
-\q
-```
 
 **"database 'tanguix_dev_db' does not exist" error:**
 
@@ -1139,12 +1204,16 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO tanguix_user
 
 The password in `server/app/.env` doesn't match what you set in PostgreSQL.
 
+**Solution: Reset the password**
 ```bash
-# Reset the password
+# Connect as superuser
 psql -d postgres
 
 # Change password
 ALTER USER tanguix_user WITH PASSWORD 'new_password';
+
+# Exit
+\q
 
 # Update server/app/.env with the new password
 # POSTGRES_PASSWORD=new_password
@@ -1167,69 +1236,13 @@ lsof -i :5432  # macOS/Linux
 netstat -an | findstr 5432  # Windows
 ```
 
-### Backend Issues
-
-**Import errors / Module not found:**
-```bash
-# Make sure conda environment is activated
-conda activate flask-app
-conda env list  # Check which environment is active
-
-# Reinstall dependencies
-pip install -r requirements.txt
-
-# Check if psycopg2 is installed
-python -c "import psycopg2; print(psycopg2.__version__)"
-```
-
-**"No module named 'app'" or similar:**
-```bash
-# Make sure you're in the server directory
-cd server
-
-# Check if __init__.py exists
-ls app/__init__.py
-
-# Try running with Python path
-PYTHONPATH=. python run.py
-```
-
-**Port 5000 already in use:**
-```bash
-# Find process using port 5000
-lsof -i :5000  # macOS/Linux
-netstat -ano | findstr :5000  # Windows
-
-# Kill the process
-kill -9 <PID>  # macOS/Linux
-taskkill /PID <PID> /F  # Windows
-
-# Or change port in your Flask config
-```
-
-**Database connection error in Flask:**
-
-1. Verify PostgreSQL is running
-2. Check `server/app/.env` credentials match your PostgreSQL setup
-3. Test connection manually:
-   ```bash
-   psql -U tanguix_user -d tanguix_dev_db -h localhost
-   ```
-4. Check Flask logs for specific error messages
-
-**Environment variables not loading:**
-- Ensure `.env` file is in `server/app/` directory
-- Check for typos in variable names
-- Restart Flask server after changing `.env`
-- Verify `python-dotenv` is installed: `pip list | grep dotenv`
-
 ### Frontend Issues
 
 **Cannot connect to backend / CORS errors:**
 
 1. Verify backend is running at the URL in `client/.env`
-2. Check `VITE_BACKEND_HOST` matches your backend URL
-3. Test backend directly: `curl http://localhost:5000`
+2. Check `VITE_BACKEND_HOST` in `client/.env` matches backend URL
+3. Test backend directly: `curl http://localhost:5000/auth/public/health`
 4. Check Flask CORS configuration
 5. Check browser console for specific error messages
 
@@ -1258,37 +1271,31 @@ npm run build
 - Restart dev server after changing `client/.env`
 - Check browser console: `import.meta.env.VITE_BACKEND_HOST`
 
-### General Issues
+### Login Issues
 
-**Forgot which database/user you created:**
+**Login fails with "Invalid username or password":**
+
+1. **Check default credentials:**
+   - Username: `admin`
+   - Password: `iamyourfather`
+
+2. **Verify admin user exists:**
 ```bash
-# List all databases
-psql -l
-
-# List all users
-psql -d postgres -c "\du"
-
-# Check current connection
-psql -U tanguix_user -d tanguix_dev_db -c "SELECT current_database(), current_user;"
+psql -U tanguix_user -d tanguix_dev_db -h localhost
+SELECT username, role, status FROM auth.users WHERE username = 'admin';
+\q
 ```
 
-**Need to start fresh (reset everything):**
-
-⚠️ **WARNING: This deletes all data!**
-
+3. **If no admin user, recreate:**
 ```bash
-# Drop database
-psql -d postgres -c "DROP DATABASE IF EXISTS tanguix_dev_db;"
-
-# Drop user
-psql -d postgres -c "DROP USER IF EXISTS tanguix_user;"
-
-# Now recreate from Step 4 in Database Setup
+cd server
+conda activate flask-app
+python setup_database.py
 ```
 
 ## 📌 Important Notes
 
-1. **Two .env files required** - `client/.env` and `server/app/.env` must both be configured
+1. **Two .env files required** - `client/.env` and `server/app/.env` must both be created manually
 2. **Database naming** - Use `tanguix_dev_db` for development, create separate databases for testing/production
 3. **Never commit .env files** - They contain sensitive credentials and are in `.gitignore`
 4. **Activate conda environment** - Always run `conda activate flask-app` before backend commands
@@ -1299,7 +1306,10 @@ psql -d postgres -c "DROP USER IF EXISTS tanguix_user;"
 9. **Frontend variables** - Must have `VITE_` prefix in SvelteKit
 10. **Regular backups** - Backup your database regularly, especially before major changes
 11. **Default postgres database** - Don't use it for your application, it's for administration only
-12. **Port conflicts** - Make sure ports 5000 (Flask), 5173 (Vite), and 5432 (PostgreSQL) are available
+12. **Password matching** - `POSTGRES_PASSWORD` in `.env` must EXACTLY match the password you set in PostgreSQL
+13. **Password required** - PostgreSQL requires authentication; you cannot leave password empty
+14. **Flask-SQLAlchemy required** - Must be installed for database operations to work
+15. **Default admin credentials** - Username: `admin`, Password: `iamyourfather` (change in production!)
 
 ## 🔗 Useful Resources
 
@@ -1314,6 +1324,13 @@ psql -d postgres -c "DROP USER IF EXISTS tanguix_user;"
 - [Conda Cheat Sheet](https://docs.conda.io/projects/conda/en/latest/user-guide/cheatsheet.html)
 
 ## 🎓 Quick Reference
+
+### Environment Files Checklist
+
+- [ ] `client/.env` created with `VITE_BACKEND_HOST=http://localhost:5000`
+- [ ] `server/app/.env` created with all database credentials
+- [ ] `POSTGRES_PASSWORD` matches the password set in PostgreSQL
+- [ ] Both files are in `.gitignore`
 
 ### PostgreSQL Concepts
 
@@ -1359,10 +1376,15 @@ postgresql://tanguix_user:mypassword@localhost:5432/tanguix_dev_db
 **Frontend (`client/.env`):**
 - `VITE_BACKEND_HOST=http://localhost:5000` - Backend API URL
 
+### Default Credentials
+
+**After running `python setup_database.py`:**
+- Username: `admin`
+- Password: `iamyourfather`
+- Role: `ADMIN`
+- Status: `active`
+
 ---
 
 **Last Updated:** October 2025
-**Version:** 2.0 (Database-First Setup Guide)
-
-
-
+**Version:** 3.0 (Environment Files Emphasis)
