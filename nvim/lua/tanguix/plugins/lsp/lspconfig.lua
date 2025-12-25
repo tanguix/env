@@ -1,5 +1,4 @@
 
-
 -- lspconfig.lua
 
 -- lot's of useful shortcut commands, explore them when you have time
@@ -16,15 +15,12 @@ return {
     "williamboman/mason-lspconfig.nvim",
   },
   config = function()
-    -- import lspconfig plugin
-    local lspconfig = require("lspconfig")
-
     -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
     local keymap = vim.keymap -- for conciseness
 
-    -- attach the lsp sever to the current buffer
+    -- attach the lsp server to the current buffer
     vim.api.nvim_create_autocmd("LspAttach", {
       group = vim.api.nvim_create_augroup("UserLspConfig", {}),
       callback = function(ev)
@@ -34,43 +30,43 @@ return {
 
         -- set keybinds
         opts.desc = "Show LSP references"
-        keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
+        keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts)
 
         opts.desc = "Go to declaration"
-        keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- go to declaration
+        keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
 
         opts.desc = "Show LSP definitions"
-        keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
+        keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
 
         opts.desc = "Show LSP implementations"
-        keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts) -- show lsp implementations
+        keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
 
         opts.desc = "Show LSP type definitions"
-        keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
+        keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts)
 
         opts.desc = "See available code actions"
-        keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts) -- see available code actions, in visual mode will apply to selection
+        keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
 
         opts.desc = "Smart rename"
-        keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
+        keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 
         opts.desc = "Show buffer diagnostics"
-        keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
+        keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
 
         opts.desc = "Show line diagnostics"
-        keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts) -- show diagnostics for line
+        keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
 
         opts.desc = "Go to previous diagnostic"
-        keymap.set("n", "[d", vim.diagnostic.goto_prev, opts) -- jump to previous diagnostic in buffer
+        keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
 
         opts.desc = "Go to next diagnostic"
-        keymap.set("n", "]d", vim.diagnostic.goto_next, opts) -- jump to next diagnostic in buffer
+        keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
 
         opts.desc = "Show documentation for what is under cursor"
-        keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
+        keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
         opts.desc = "Restart LSP"
-        keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
+        keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts)
       end,
     })
 
@@ -102,64 +98,49 @@ return {
       },
     })
 
-    -- Configure servers directly (modern approach)
-    local servers = {
-      "ts_ls",
-      "html", 
-      "cssls",
-      "svelte",
-      "graphql",
-      "emmet_ls",
-      "prismals",
-      "pyright",
-    }
+    -- Configure LSP servers using vim.lsp.config (Neovim 0.11+ API)
 
-    -- Setup each server individually
-    for _, server in ipairs(servers) do
-      if server == "svelte" then
-        lspconfig.svelte.setup({
-          capabilities = capabilities,
-          on_attach = function(client, bufnr)
-            vim.api.nvim_create_autocmd("BufWritePost", {
-              pattern = { "*.js", "*.ts" },
-              callback = function(ctx)
-                client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-              end,
-            })
+    -- Default capabilities for all servers
+    vim.lsp.config("*", {
+      capabilities = capabilities,
+    })
+
+    -- Simple servers (just need capabilities)
+    vim.lsp.enable("ts_ls")
+    vim.lsp.enable("html")
+    vim.lsp.enable("cssls")
+    vim.lsp.enable("prismals")
+    vim.lsp.enable("pyright")
+
+    -- Svelte with custom on_attach
+    vim.lsp.config("svelte", {
+      capabilities = capabilities,
+      on_attach = function(client, bufnr)
+        vim.api.nvim_create_autocmd("BufWritePost", {
+          pattern = { "*.js", "*.ts" },
+          callback = function(ctx)
+            client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
           end,
         })
-      elseif server == "graphql" then
-        lspconfig.graphql.setup({
-          capabilities = capabilities,
-          filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-        })
-      elseif server == "emmet_ls" then
-        lspconfig.emmet_ls.setup({
-          capabilities = capabilities,
-          filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
-        })
-      elseif server == "lua_ls" then
-        lspconfig.lua_ls.setup({
-          capabilities = capabilities,
-          settings = {
-            Lua = {
-              diagnostics = {
-                globals = { "vim" },
-              },
-              completion = {
-                callSnippet = "Replace",
-              },
-            },
-          },
-        })
-      else
-        -- Default setup for other servers
-        lspconfig[server].setup({
-          capabilities = capabilities,
-        })
-      end
-    end
+      end,
+    })
+    vim.lsp.enable("svelte")
+
+    -- GraphQL with custom filetypes
+    vim.lsp.config("graphql", {
+      capabilities = capabilities,
+      filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
+    })
+    vim.lsp.enable("graphql")
+
+    -- Emmet with custom filetypes
+    vim.lsp.config("emmet_ls", {
+      capabilities = capabilities,
+      filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
+    })
+    vim.lsp.enable("emmet_ls")
   end,
 }
+
 
 
