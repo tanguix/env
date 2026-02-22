@@ -118,7 +118,6 @@ hover
 
 **+ Mission Control (for no touchpad situation)**
 ```
-• mission Control                       --> ctrl + up
 • show notification center              --> ctrl + left
 • application windows                   --> cmd + down
 • show desktop                          --> ctrl + right
